@@ -1,30 +1,52 @@
+# Day: 1 |> Protein Translation
 
-# Day: 1 |> RNA Transcription
+Translate RNA sequences into proteins.
 
-Given a DNA strand, return its RNA complement (per RNA transcription).
+RNA can be broken into three nucleotide sequences called codons, and then translated to a polypeptide like so:
 
-Both DNA and RNA strands are a sequence of nucleotides.
+RNA: `"AUGUUUUCU"` => translates to
 
-The four nucleotides found in DNA are adenine (**A**), cytosine (**C**),
-guanine (**G**) and thymine (**T**).
+Codons: `"AUG", "UUU", "UCU"`
+=> which become a polypeptide with the following sequence =>
 
-The four nucleotides found in RNA are adenine (**A**), cytosine (**C**),
-guanine (**G**) and uracil (**U**).
+Protein: `"Methionine", "Phenylalanine", "Serine"`
 
-Given a DNA strand, its transcribed RNA strand is formed by replacing
-each nucleotide with its complement:
+There are 64 codons which in turn correspond to 20 amino acids; however, all of the codon sequences and resulting amino acids are not important in this exercise.  If it works for one codon, the program should work for all of them.
+However, feel free to expand the list in the test suite to include them all.
 
-* `G` -> `C`
-* `C` -> `G`
-* `T` -> `A`
-* `A` -> `U`
+There are also three terminating codons (also known as 'STOP' codons); if any of these codons are encountered (by the ribosome), all translation ends and the protein is terminated.
+
+All subsequent codons after are ignored, like this:
+
+RNA: `"AUGUUUUCUUAAAUG"` =>
+
+Codons: `"AUG", "UUU", "UCU", "UAA", "AUG"` =>
+
+Protein: `"Methionine", "Phenylalanine", "Serine"`
+
+Note the stop codon `"UAA"` terminates the translation and the final methionine is not translated into the protein sequence.
+
+Below are the codons and resulting Amino Acids needed for the exercise.
+
+Codon                 | Protein
+:---                  | :---
+AUG                   | Methionine
+UUU, UUC              | Phenylalanine
+UUA, UUG              | Leucine
+UCU, UCC, UCA, UCG    | Serine
+UAU, UAC              | Tyrosine
+UGU, UGC              | Cysteine
+UGG                   | Tryptophan
+UAA, UAG, UGA         | STOP
+
+Learn more about [protein translation on Wikipedia](http://en.wikipedia.org/wiki/Translation_(biology))
 
 ## Running tests
 
 Execute the tests with:
 
 ```bash
-$ elixir rna_transcription_test.exs
+$ elixir protein_translation_test.exs
 ```
 
 ### Pending tests
@@ -56,7 +78,7 @@ out there where answers might be found.
 
 ## Source
 
-Hyperphysics [http://hyperphysics.phy-astr.gsu.edu/hbase/Organic/transcription.html](http://hyperphysics.phy-astr.gsu.edu/hbase/Organic/transcription.html)
+Tyler Long
 
 ## Submitting Incomplete Solutions
 It's possible to submit an incomplete solution so you can see how others have completed the exercise.
