@@ -1,4 +1,4 @@
-#Day 8 |>  Accumulate
+# Day 8 |>  Accumulate
 
 Implement the `accumulate` operation, which, given a collection and an
 operation to perform on each element of the collection, returns a new
