@@ -1,4 +1,4 @@
-#Day 18 |>  Isogram
+## Day 18 |>  Isogram
 
 Determine if a word or phrase is an isogram.
 
