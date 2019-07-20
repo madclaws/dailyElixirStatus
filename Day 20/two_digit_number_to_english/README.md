@@ -1,6 +1,6 @@
 # Say only upto 2 digits
 
-Given a number from 0 to 999,999,999,999, spell out that number in English.
+Given a number from 0 to 99, spell out that number in English.
 
 ## Step 1
 
