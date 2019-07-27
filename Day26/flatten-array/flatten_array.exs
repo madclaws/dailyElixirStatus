@@ -13,12 +13,11 @@ defmodule FlattenArray do
   """
 
   @spec flatten(list) :: list
-  def flatten(list) do
-    flatten_process(list, []) |> Enum.reverse
-  end
+  def flatten(list, flatten_list \\ [])
+  def flatten([], flatten_list), do: flatten_list
+  def flatten([h | t], flatten_list), do: flatten(t, flatten(h,  flatten_list))
+  def flatten(h, flatten_list) when h === nil, do: flatten_list
+  def flatten(h, flatten_list), do: flatten_list ++ [h]
 
-  def flatten_process([], flatten_list), do: flatten_list
-  def flatten_process([h | t], flatten_list), do: flatten_process(t, flatten_process(h,  flatten_list))
-  def flatten_process(h, flatten_list) when h === nil, do: flatten_list
-  def flatten_process(h, flatten_list), do: [h | flatten_list]
+
 end
