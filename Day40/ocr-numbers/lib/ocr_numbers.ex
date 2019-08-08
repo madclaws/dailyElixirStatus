@@ -6,12 +6,17 @@ defmodule OcrNumbers do
   """
   @spec convert([String.t()]) :: String.t()
   def convert(input) do
+    case is_valid?(input) do
+      {false, reason} -> {:error, reason}
+      _ -> {:ok, convert_multi_line(input)}
+    end
   end
+
 
   #############################################################################
   #  OCR Validation Checking functions
 
-  def is_valid?(input) do
+  defp is_valid?(input) do
     is_valid_rows?(input)
     |> is_valid_columns?(input)
   end
@@ -23,10 +28,10 @@ defmodule OcrNumbers do
   defp is_valid_columns?(true, input) do
     case are_column_numbers_okay?(input) do
       true -> true
-      false -> {:error, 'invalid column count'}
+      false -> {false, 'invalid column count'}
     end
   end
-  defp is_valid_columns?(false, _), do: {:error, 'invalid line count'}
+  defp is_valid_columns?(false, _), do: {false, 'invalid line count'}
 
   defp are_column_numbers_okay?(input)  do
     Enum.all?(input, fn row_element ->
@@ -35,6 +40,15 @@ defmodule OcrNumbers do
   end
 
 #################################################################################
+
+defp convert_multi_line(input) do
+  num_of_lines = div(Enum.count(input), 4)
+  {formatted_number, _} = Enum.reduce(0..num_of_lines - 1, {[], 0}, fn _line_num, {formatted_line, slice_start} ->
+    formatted_number = Enum.slice(input, slice_start, 4) |> convert_single_line()
+    {formatted_line ++ [formatted_number], slice_start + 4}
+  end)
+  Enum.join(formatted_number, ",")
+end
 
 # Convert single line
 
@@ -56,21 +70,6 @@ end
 defp get_list_from_range(len) do
   for i <- 0..div(len, 3) - 1, do: i
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #################################################################################
 #     Pattern matching functions for OCR => number
