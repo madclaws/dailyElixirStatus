@@ -1,10 +1,10 @@
-# Day42 |> Kalavastha (Concurrently fetches live temperature of cities, using basic process communicationfunctions)
+# Day42 |> Kalavastha (Concurrently fetches live temperature of cities, using basic process communication functions)
 
 ## Note
 Kalavastha is a part of my dailyElixirStatus
 
-Day 41 |> naive worker module, fetches temperature of cities synchronously
-Day 42 |> Concurrently fetches live temperature of cities, using basic process communication functions.  
+- Day 41 |> naive worker module, fetches temperature of cities synchronously
+- Day 42 |> Concurrently fetches live temperature of cities, using basic process communication functions.  
 
 **Kalavastha gives you live weather report of different cities**
 
