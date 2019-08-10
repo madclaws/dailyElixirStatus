@@ -1,9 +1,18 @@
-defmodule Worker do
+defmodule Kalavastha.Worker do
+
+  def loop() do
+    receive do
+      {sender_pid, location} ->
+        send(sender_pid, {:ok, get_weather(location)})
+      _ -> IO.puts("INVALID")
+    end
+    loop()
+  end
 
   def get_weather(location) do
     result = location |> url_for |> HTTPoison.get |> parse_response
     case result do
-      {:ok, temperature} -> "the temperature at #{location} is #{temperature}"
+      {:ok, temperature} -> "the temperature at #{location} is #{temperature}°C"
       :error -> "What on earth is that place "
     end
   end
@@ -28,7 +37,7 @@ defmodule Worker do
 
   defp compute_temp(json_data) do
     try do
-      temp = json_data["main"]["temp"] - 273.15
+      temp = json_data["main"]["temp"] - 273.15 |> Float.round(1)
       {:ok, temp}
     rescue
     _ -> :error
