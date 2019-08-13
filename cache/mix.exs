@@ -1,9 +1,9 @@
-defmodule Kalavastha.MixProject do
+defmodule Cache.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :kalavastha,
+      app: :cache,
       version: "0.1.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
@@ -21,8 +21,6 @@ defmodule Kalavastha.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:httpoison, "~> 1.4"},
-      {:json, "~> 1.2"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
