@@ -1,4 +1,4 @@
-#Day47 |>  Ring
+# Day47 |>  Ring
 
 **Creating a Ringed network process chain, where processes are connected like a ring network and if one of the process in the ring crashes, the entire network crahes (supervisor 101)**
 
