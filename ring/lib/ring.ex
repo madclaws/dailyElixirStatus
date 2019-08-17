@@ -1,4 +1,5 @@
 defmodule Ring do
+  require Logger
   @moduledoc """
   Documentation for Ring.
   """
@@ -13,7 +14,10 @@ defmodule Ring do
     receive do
       {:link, link_to_pid} ->
         Process.link(link_to_pid)
+      :trap -> Process.flag(:trap_exit, true)
       :crash -> 1 / 0
+      {:EXIT, pid, reason} ->
+        Logger.info("#{inspect(pid)} exited with #{inspect(reason)}")
     end
     loop()
   end
@@ -32,6 +36,11 @@ defmodule Ring do
     send(proc, {:link, List.last(linked_process_list)})
   end
 
+  def add_trap_feature(proc_list) do
+    proc_list |> Enum.each(fn proc_id ->
+      Process.send(proc_id, :trap, [])
+    end)
+  end
   def crash_any_process(process_list) do
     process_list |> Enum.shuffle() |> hd() |> send(:crash)
   end
