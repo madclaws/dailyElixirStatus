@@ -1,6 +1,7 @@
-# Day47 |>  Ring
+# Day49 |>  Ring
 
-**Creating a Ringed network process chain, where processes are connected like a ring network and if one of the process in the ring crashes, the entire network crahes (supervisor 101)**
+**Creating a Ringed network process chain, where processes are connected like a ring network .Replaced Process
+.link() with Process.monitor**
 
 ## Installation
 

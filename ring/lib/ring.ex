@@ -13,12 +13,13 @@ defmodule Ring do
   def loop() do
     receive do
       {:link, link_to_pid} ->
-        Process.link(link_to_pid)
-      :trap -> Process.flag(:trap_exit, true)
+        Process.monitor(link_to_pid)
       :crash -> 1 / 0
       {:EXIT, pid, reason} ->
         Logger.info("#{inspect(pid)} exited with #{inspect(reason)}")
-    end
+      {:DOWN, _ref, _, pid, reason} ->
+        Logger.info("#{inspect(pid)} crashed with a reason #{inspect(reason)}")
+      end
     loop()
   end
 
