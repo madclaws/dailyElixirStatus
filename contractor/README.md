@@ -1,6 +1,8 @@
-# Contractor
+# Contractor (Day52 |> A sample worker)
 
 **Contractor lends you workers, to do your petty jobs.**
+
+**Need to reimplement the worker supervisor with Dynamic supervisor**
 
 ## Installation
 
