@@ -1,18 +1,22 @@
-defmodule Chat.Registry do
-  use GenServer
-  def start_link do
-    GenServer.start_link(__MODULE__, [])
-  end
+# defmodule Chat.Registry do
+#   use GenServer
+#   def start_link do
+#     GenServer.start_link(__MODULE__, [])
+#   end
 
-  def register_name() do
+#   def register_name() do
 
-  end
+#   end
 
-  def unregister_name() do
+#   def unregister_name() do
 
-  end
+#   end
 
-  def whereis_name do
+#   def whereis_name() do
 
-  end
-end
+#   end
+
+#   def send do
+
+#   end
+# end
