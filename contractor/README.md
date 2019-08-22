@@ -1,8 +1,8 @@
-# Contractor (Day53 |> Implemented Worker Supervisor with DynamicSupervisor)
+# Contractor (Day54 |> Implemented Contractor.Server which is the brain of Contractor)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**Implemented Worker Supervisor with DynamicSupervisor**
+**Implemented Contractor.Server which is the brain of Contractor**
 
 ## Installation
 
