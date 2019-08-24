@@ -1,8 +1,8 @@
-# Contractor (Day54 |> Implemented Contractor.Server which is the brain of Contractor)
+# Contractor (Day55 |> Implemented checkin, checkout and status funcions in Contractor.Server)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**Implemented Contractor.Server which is the brain of Contractor**
+**Implemented checkin, checkout and status funcions in Contractor.Server**
 
 ## Installation
 
