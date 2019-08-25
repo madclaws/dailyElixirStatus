@@ -1,8 +1,8 @@
-# Contractor (Day55 |> Implemented checkin, checkout and status funcions in Contractor.Server)
+# Contractor (Day56 |> Added Top level supervisor and made Contractor an App)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**Implemented checkin, checkout and status funcions in Contractor.Server**
+**Added Top level supervisor and made Contractor an App**
 
 ## Installation
 

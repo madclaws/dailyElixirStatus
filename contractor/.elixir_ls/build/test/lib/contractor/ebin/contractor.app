@@ -4,6 +4,8 @@
               {modules,['Elixir.Contractor','Elixir.Contractor.SampleWorker',
                         'Elixir.Contractor.Server',
                         'Elixir.Contractor.Server.State',
+                        'Elixir.Contractor.Supervisor',
                         'Elixir.Contractor.WorkerSupervisor']},
               {registered,[]},
-              {vsn,"0.1.0"}]}.
+              {vsn,"0.1.0"},
+              {mod,{'Elixir.Contractor',[]}}]}.
