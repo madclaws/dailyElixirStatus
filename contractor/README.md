@@ -1,8 +1,8 @@
-# Contractor (Day56 |> Added Top level supervisor and made Contractor an App)
+# Contractor (Day58 |> Handling Consumer Crash)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**Added Top level supervisor and made Contractor an App**
+**Handling Consumer Crash in handle_info, clearing from ets, adding worker back to state**
 
 ## Installation
 

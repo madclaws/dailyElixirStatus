@@ -7,7 +7,7 @@ defmodule Contractor do
     start_contractor(pool_config)
   end
 
-  defp start_contractor(pool_config) do
+  def start_contractor(pool_config) do
     Contractor.Supervisor.start_link(pool_config)
   end
 

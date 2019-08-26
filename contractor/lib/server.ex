@@ -1,5 +1,6 @@
 defmodule Contractor.Server do
   use GenServer
+  require Logger
   # import Supervisor, only: [child_spec: 2, start_child: 2]
   defmodule State do
     defstruct sup: nil, size: nil, mfa: nil, worker_sup: nil, workers: nil, monitor: nil
@@ -41,10 +42,22 @@ defmodule Contractor.Server do
   @impl true
   def handle_info(:start_worker_supervisor, state) do
     # start the worker supervisor
+    Logger.info("state #{inspect(state)}")
     {:ok, worker_sup} = Supervisor.start_child(state.sup, get_worker_supervisor_spec())
     worker_list = spin_up_workers(state.size, state.mfa)
     {:noreply, %State{state | worker_sup: worker_sup, workers: worker_list}}
   end
+
+  @impl true
+  def handle_info({:DOWN, ref, _, _, _}, state) do
+    case :ets.match(state.monitor, {:"$1", ref}) do
+      [[worker_pid]] ->
+        true = :ets.delete(state.monitor, worker_pid)
+        {:noreply, %State{state | workers: [worker_pid | state.workers]}}
+      [] -> {:noreply, state}
+    end
+  end
+
   @impl true
   def handle_call(:checkout, {consumer_pid, _ref}, state) do
     case state.workers do

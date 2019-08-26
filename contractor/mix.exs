@@ -13,12 +13,10 @@ defmodule Contractor.MixProject do
 
   # Run "mix help compile.app" to learn about applications.
   def application do
-    [
-      extra_applications: [:logger],
+    [ applications: [:logger],
       mod: {Contractor, []}
     ]
-  end
-
+    end
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [

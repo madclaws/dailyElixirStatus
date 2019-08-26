@@ -5,7 +5,7 @@ defmodule Contractor.WorkerSupervisor do
   # Client functions
   ##################
 
-  def start_link() do
+  def start_link(_) do
     DynamicSupervisor.start_link(__MODULE__, %{},  name: __MODULE__)
   end
 
