@@ -1,8 +1,8 @@
-# Contractor (Day58 |> Handling Consumer Crash)
+# Contractor (Day59 |> Working on v3, top level design changes)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**Handling Consumer Crash in handle_info, clearing from ets, adding worker back to state**
+**Working on Contracto.Server, changing it to start Contractor.PoolSupervisor by Contractor.PoolsSupervisor, need to also add new checkin, checkout function in Contractor.Server**
 
 ## Installation
 

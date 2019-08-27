@@ -16,7 +16,13 @@ defmodule Contractor.Supervisor do
 @impl true
 def init(pool_config) do
   children = [
-    {Contractor.Server, [self(), pool_config]}
+    # Add child spec of Contractor.PoolsSupervisor
+    %{
+      id: Contractor.PoolsSupervisor,
+      start: {Contractor.PoolsSupervisor, :start_link, []},
+      type: :supervisor
+    },
+    {Contractor.Server, [pool_config]}
   ]
   Supervisor.init(children, strategy: :one_for_all)
 end

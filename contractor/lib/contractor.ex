@@ -2,13 +2,17 @@ defmodule Contractor do
   use Application
   require Logger
   def start(_types, _args) do
-    pool_config = [mfa: {Contractor.SampleWorker, :start_link, []}, size: 5]
+    pools_config = [
+                    [name: "pool1", mfa: {Contractor.SampleWorker, :start_link, []}, size: 5],
+                    [name: "pool2", mfa: {Contractor.SampleWorker, :start_link, []}, size: 2],
+                    [name: "pool3", mfa: {Contractor.SampleWorker, :start_link, []}, size: 3]
+                  ]
     Logger.info("Starting Contractor")
-    start_contractor(pool_config)
+    start_contractor(pools_config)
   end
 
-  def start_contractor(pool_config) do
-    Contractor.Supervisor.start_link(pool_config)
+  def start_contractor(pools_config) do
+    Contractor.Supervisor.start_link(pools_config)
   end
 
   def checkout do
