@@ -108,6 +108,19 @@ defmodule Contractor.Server do
     GenServer.start_link(__MODULE__, pools_config, name: __MODULE__)
   end
 
+  def checkout_worker(pool_name) do
+    GenServer.call(:"#{pool_name}Server", :checkout)
+  end
+
+  def checkin_worker(pool_name, worker_pid)  do
+    GenServer.cast(:"#{pool_name}Server", {:checkin, worker_pid})
+  end
+
+  def get_status(pool_name)  do
+    GenServer.call(:"#{pool_name}Server", :status)
+  end
+
+  @impl true
   def init(pools_config) do
     pools_config
     |> Enum.each(fn pool_config ->
@@ -116,17 +129,22 @@ defmodule Contractor.Server do
     {:ok, pools_config}
   end
 
-  # @imple true
-  # def handle_info({:start_pool, pool_config}, state) do
-  #   Supervisor.start_child(Contractor.PoolsSupervisor, child_spec)
-  # end
+  @impl true
+  def handle_info({:start_pool, pool_config}, state) do
+    Supervisor.start_child(Contractor.PoolsSupervisor, get_pool_server_spec(pool_config))
+    {:noreply, state}
+  end
 
+  # @impl true
+  # def handle_in({:checkout, pool_name}) do
+
+  # end
   ##################
   # Helper functions
   ##################
 
-  # defp get_pool_server_spec() do
-  #   Supervisor.child_spec(Contractor.WorkerSupervisor,  type: :supervisor, restart: :temporary)
-  # end
+  defp get_pool_server_spec(pool_config) do
+    Supervisor.child_spec({Contractor.PoolSupervisor, [pool_config]},  type: :supervisor, id: :"#{pool_config[:name]}Supervisor")
+  end
 
 end

@@ -15,16 +15,16 @@ defmodule Contractor do
     Contractor.Supervisor.start_link(pools_config)
   end
 
-  def checkout do
-    Contractor.Server.checkout_worker()
+  def checkout(pool_name) do
+    Contractor.Server.checkout_worker(pool_name)
   end
 
-  def checkin(worker_pid) do
-    Contractor.Server.checkin_worker(worker_pid)
+  def checkin(pool_name, worker_pid) do
+    Contractor.Server.checkin_worker(pool_name, worker_pid)
   end
 
-  def status do
-    Contractor.Server.get_status()
+  def status(pool_name) do
+    Contractor.Server.get_status(pool_name)
   end
 
 end

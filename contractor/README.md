@@ -1,8 +1,8 @@
-# Contractor (Day59 |> Working on v3, top level design changes)
+# Contractor (Day60 |> v3 work continues, modifications in WorkerSupervisor and SampleWorker remaining)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**Working on Contracto.Server, changing it to start Contractor.PoolSupervisor by Contractor.PoolsSupervisor, need to also add new checkin, checkout function in Contractor.Server**
+**v3 work continues, modifications in WorkerSupervisor and SampleWorker remaining**
 
 ## Installation
 
