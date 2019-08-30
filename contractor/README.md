@@ -1,8 +1,8 @@
-# Contractor (Day60 |> v3 work continues, modifications in WorkerSupervisor and SampleWorker remaining)
+# Contractor (Day61 |> modified worker supervisor and pool server)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**v3 work continues, modifications in WorkerSupervisor and SampleWorker remaining**
+**modified worker supervisor and pool server**
 
 ## Installation
 

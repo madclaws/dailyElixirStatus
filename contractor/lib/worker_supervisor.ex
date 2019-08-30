@@ -5,8 +5,8 @@ defmodule Contractor.WorkerSupervisor do
   # Client functions
   ##################
 
-  def start_link(_) do
-    DynamicSupervisor.start_link(__MODULE__, %{},  name: __MODULE__)
+  def start_link(pool_server) do
+    DynamicSupervisor.start_link(__MODULE__, pool_server,  name: __MODULE__)
   end
 
   def start_child({m, _f, a}) do
@@ -18,7 +18,8 @@ defmodule Contractor.WorkerSupervisor do
   # Server functions
   ##################
 @impl true
-def init(_) do
+def init(pool_server) do
+  Process.link(pool_server)
   DynamicSupervisor.init(
     strategy: :one_for_one,
     max_restarts: 5,

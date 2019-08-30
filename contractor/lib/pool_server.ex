@@ -44,6 +44,11 @@ defmodule Contractor.PoolServer do
   end
 
   @impl true
+  def handle_info({:EXIT, _worker_sup, reason}, state)  do
+      {:stop, reason, state}
+  end
+
+  @impl true
   def handle_info({:DOWN, ref, _, _, _}, state) do
     case :ets.match(state.monitor, {:"$1", ref}) do
       [[worker_pid]] ->
@@ -82,7 +87,7 @@ defmodule Contractor.PoolServer do
 
   # helper functions
   defp get_worker_supervisor_spec(name) do
-    Supervisor.child_spec(Contractor.WorkerSupervisor,  type: :supervisor, restart: :temporary, id: name)
+    Supervisor.child_spec({Contractor.WorkerSupervisor, [self()]},  type: :supervisor, restart: :temporary, id: name)
   end
 
   defp spin_up_workers(size, mfa) do
