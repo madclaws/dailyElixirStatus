@@ -1,12 +1,10 @@
 defmodule QuickSort do
   
-  def sort(list) do
-    pivot = hd(list)
-    IO.puts("pivot is #{pivot}")
-    lower_list = list
-    |> Enum.filter(fn element -> element < pivot end)
-    upper_list = Enum.filter(list, fn element -> element >= pivot end) 
-    lower_list
+  def sort([]), do: []
+
+  def sort([pivot | t]) do
+     sort(for i <- t, i < pivot, do: i)
+     ++ [pivot] ++ sort(for i <- t, i >= pivot, do: i)
   end
   
 end
