@@ -5,13 +5,13 @@ defmodule Contractor.WorkerSupervisor do
   # Client functions
   ##################
 
-  def start_link(pool_server) do
-    DynamicSupervisor.start_link(__MODULE__, pool_server,  name: __MODULE__)
+  def start_link(pool_server, name) do
+    DynamicSupervisor.start_link(__MODULE__, pool_server,  name: :"#{name}_worker_sup")
   end
 
-  def start_child({m, _f, a}) do
+  def start_child({m, _f, a}, name) do
     spec = {m, a}
-    DynamicSupervisor.start_child(__MODULE__, spec)
+    DynamicSupervisor.start_child(:"#{name}_worker_sup", spec)
   end
 
   ##################

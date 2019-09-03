@@ -22,7 +22,7 @@ def init(pool_config) do
       start: {Contractor.PoolsSupervisor, :start_link, []},
       type: :supervisor
     },
-    {Contractor.Server, [pool_config]}
+    {Contractor.Server, pool_config}
   ]
   Supervisor.init(children, strategy: :one_for_all)
 end
