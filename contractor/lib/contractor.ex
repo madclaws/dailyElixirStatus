@@ -3,9 +3,9 @@ defmodule Contractor do
   require Logger
   def start(_types, _args) do
     pools_config = [
-                    [name: "pool1", mfa: {Contractor.SampleWorker, :start_link, []}, size: 5],
-                    [name: "pool2", mfa: {Contractor.SampleWorker, :start_link, []}, size: 2],
-                    [name: "pool3", mfa: {Contractor.SampleWorker, :start_link, []}, size: 3]
+                    [name: "pool1", mfa: {Contractor.SampleWorker, :start_link, []}, size: 5, max_overflow: 0],
+                    [name: "pool2", mfa: {Contractor.SampleWorker, :start_link, []}, size: 2, max_overflow: 2],
+                    [name: "pool3", mfa: {Contractor.SampleWorker, :start_link, []}, size: 3, max_overflow: 0],
                   ]
     Logger.info("Starting Contractor")
     start_contractor(pools_config)

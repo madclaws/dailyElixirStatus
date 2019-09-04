@@ -3,7 +3,8 @@ defmodule Contractor.PoolServer do
   use GenServer
   # Client functions
   defmodule State do
-    defstruct pool_sup: nil, size: nil, mfa: nil, worker_sup: nil, workers: nil, monitor: nil, name: nil
+    defstruct pool_sup: nil, size: nil, mfa: nil, worker_sup: nil, workers: nil, monitor: nil, name: nil,
+    overflow: nil, max_overflow: nil
   end
 
   def start_link([_pool_sup, pool_config] = params) do
@@ -26,12 +27,13 @@ defmodule Contractor.PoolServer do
   @impl true
   def init([pool_sup, pool_config]) when is_pid(pool_sup) do
     monitor = :ets.new(:monitors, [:private])
+    Logger.info("#{inspect(pool_config)}")
     init(pool_config, %State{pool_sup: pool_sup, monitor: monitor, name: "#{pool_config[:name]}Server"})
   end
 
-  def init([{:name, name}, {:mfa, mfa}, {:size, size}], state) do
+  def init([{:name, _name}, {:mfa, mfa}, {:size, size}, {:max_overflow, max_overflow}], state) do
     send(self(), :start_worker_supervisor)
-    {:ok, %State{state | mfa: mfa, size: size}}
+    {:ok, %State{state | mfa: mfa, size: size, max_overflow: max_overflow}}
   end
 
   @impl true
@@ -59,13 +61,18 @@ defmodule Contractor.PoolServer do
   end
 
   @impl true
-  def handle_call(:checkout, {consumer_pid, _ref}, state) do
+  def handle_call(:checkout, {consumer_pid, _ref}, %{max_overflow: max_overflow, overflow: overflow} = state) do
     case state.workers do
       [worker_pid | rest] ->
         ref = Process.monitor(consumer_pid)
         true = :ets.insert(state.monitor, {worker_pid, ref})
         {:reply, worker_pid, %State{ state | workers: rest}}
-      [] -> {:reply, :noproc, state}
+      [] when max_overflow > 0 and overflow < max_overflow ->
+         ref = Process.monitor(consumer_pid)
+         worker_pid = hd(spin_up_workers(1, state.mfa, state.name))
+         true = :ets.insert(state.monitor, {worker_pid, ref})
+        {:reply, worker_pid, %State{state | overflow: overflow + 1}}
+      [] -> {:reply, :full, state}
     end
   end
 
@@ -87,7 +94,7 @@ defmodule Contractor.PoolServer do
 
   # helper functions
   defp get_worker_supervisor_spec(name) do
-    Supervisor.child_spec({Contractor.WorkerSupervisor, self()},  type: :supervisor, restart: :temporary, id: "#{name}_worker_sup")
+    Supervisor.child_spec({Contractor.WorkerSupervisor, [self(), name]},  type: :supervisor, restart: :temporary, id: "#{name}_worker_sup")
   end
 
   defp spin_up_workers(size, mfa, name) do

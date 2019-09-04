@@ -5,7 +5,7 @@ defmodule Contractor.WorkerSupervisor do
   # Client functions
   ##################
 
-  def start_link(pool_server, name) do
+  def start_link([pool_server, name] = _params) do
     DynamicSupervisor.start_link(__MODULE__, pool_server,  name: :"#{name}_worker_sup")
   end
 

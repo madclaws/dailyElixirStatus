@@ -1,8 +1,8 @@
-# Contractor (Day61 |> modified worker supervisor and pool server)
+# Contractor (Day65 |> Started Contractor v4, added overflow logic in checkout)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**modified worker supervisor and pool server**
+**Started Contractor v4, added overflow logic in checkout**
 
 ## Installation
 
