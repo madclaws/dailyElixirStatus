@@ -112,11 +112,11 @@ defmodule Contractor.Server do
     GenServer.call(:"#{pool_name}Server", :checkout)
   end
 
-  def checkin_worker(pool_name, worker_pid)  do
+  def checkin_worker(pool_name, worker_pid) do
     GenServer.cast(:"#{pool_name}Server", {:checkin, worker_pid})
   end
 
-  def get_status(pool_name)  do
+  def get_status(pool_name) do
     GenServer.call(:"#{pool_name}Server", :status)
   end
 
@@ -126,6 +126,7 @@ defmodule Contractor.Server do
     |> Enum.each(fn pool_config ->
       send(self(), {:start_pool, pool_config})
     end)
+
     {:ok, pools_config}
   end
 
@@ -145,7 +146,10 @@ defmodule Contractor.Server do
 
   defp get_pool_server_spec(pool_config) do
     Logger.info("#{inspect(pool_config)}")
-    Supervisor.child_spec({Contractor.PoolSupervisor, pool_config},  type: :supervisor, id: :"#{pool_config[:name]}Supervisor")
-  end
 
+    Supervisor.child_spec({Contractor.PoolSupervisor, pool_config},
+      type: :supervisor,
+      id: :"#{pool_config[:name]}Supervisor"
+    )
+  end
 end

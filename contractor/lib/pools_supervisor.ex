@@ -6,9 +6,7 @@ defmodule Contractor.PoolsSupervisor do
   end
 
   def init(_) do
-    children = [
-
-    ]
+    children = []
     Supervisor.init(children, strategy: :one_for_one)
   end
 end

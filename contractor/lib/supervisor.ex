@@ -2,7 +2,7 @@ defmodule Contractor.Supervisor do
   use Supervisor
 
   #################
-  #client functions
+  # client functions
   #################
 
   def start_link(pool_config) do
@@ -13,18 +13,18 @@ defmodule Contractor.Supervisor do
   # Server functions
   ##################
 
-@impl true
-def init(pool_config) do
-  children = [
-    # Add child spec of Contractor.PoolsSupervisor
-    %{
-      id: Contractor.PoolsSupervisor,
-      start: {Contractor.PoolsSupervisor, :start_link, []},
-      type: :supervisor
-    },
-    {Contractor.Server, pool_config}
-  ]
-  Supervisor.init(children, strategy: :one_for_all)
-end
+  @impl true
+  def init(pool_config) do
+    children = [
+      # Add child spec of Contractor.PoolsSupervisor
+      %{
+        id: Contractor.PoolsSupervisor,
+        start: {Contractor.PoolsSupervisor, :start_link, []},
+        type: :supervisor
+      },
+      {Contractor.Server, pool_config}
+    ]
 
+    Supervisor.init(children, strategy: :one_for_all)
+  end
 end
