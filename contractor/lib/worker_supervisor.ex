@@ -14,6 +14,9 @@ defmodule Contractor.WorkerSupervisor do
     DynamicSupervisor.start_child(:"#{name}_worker_sup", spec)
   end
 
+  def kill_child(name, pid) do
+    DynamicSupervisor.terminate_child(:"#{name}_worker_sup", pid)
+  end
   ##################
   # Server functions
   ##################

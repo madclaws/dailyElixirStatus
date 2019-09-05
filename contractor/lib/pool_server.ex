@@ -33,6 +33,7 @@ defmodule Contractor.PoolServer do
   # Server functions
   @impl true
   def init([pool_sup, pool_config]) when is_pid(pool_sup) do
+    Process.flag(:trap_exit, true)
     monitor = :ets.new(:monitors, [:private])
     Logger.info("#{inspect(pool_config)}")
 
@@ -57,13 +58,27 @@ defmodule Contractor.PoolServer do
       Supervisor.start_child(state.pool_sup, get_worker_supervisor_spec(state.name))
 
     worker_list = spin_up_workers(state.size, state.mfa, state.name)
+    Enum.each(worker_list, fn worker -> Process.link(worker) end )
     {:noreply, %State{state | worker_sup: worker_sup, workers: worker_list}}
+
   end
 
   @impl true
-  def handle_info({:EXIT, _worker_sup, reason}, state) do
-    {:stop, reason, state}
+  def handle_info({:EXIT, pid, _reason}, %{overflow: overflow} = state) do
+    case :ets.lookup(state.monitor, pid) do
+      [{pid, ref}] ->
+        true = Process.demonitor(ref)
+        true = :ets.delete(state.monitor, pid)
+        if overflow > 0 do
+          {:noreply, %State{state | overflow: overflow - 1}}
+        else
+          {:noreply, %State{state | workers: [hd(spin_up_workers(1, state.mfa, state.name)) | state.workers]}}
+        end
+      [] ->
+        {:noreply, state}
+    end
   end
+
 
   @impl true
   def handle_info({:DOWN, ref, _, _, _}, state) do
@@ -101,16 +116,21 @@ defmodule Contractor.PoolServer do
   end
 
   def handle_call(:status, _from, state) do
-    {:reply, {length(state.workers), :ets.info(state.monitor, :size)}, state}
+    {:reply, {state_name(state), length(state.workers), :ets.info(state.monitor, :size)}, state}
   end
 
   @impl true
-  def handle_cast({:checkin, worker_pid}, state) do
+  def handle_cast({:checkin, worker_pid}, %{overflow: overflow} = state) do
     case :ets.lookup(state.monitor, worker_pid) do
       [{pid, ref}] ->
         true = Process.demonitor(ref)
         true = :ets.delete(state.monitor, pid)
-        {:noreply, %State{state | workers: [pid | state.workers]}}
+        if overflow > 0 do
+          :ok = Contractor.WorkerSupervisor.kill_child(state.name, pid)
+          {:noreply, %State{state | overflow: overflow - 1}}
+        else
+          {:noreply, %State{state | workers: [pid | state.workers]}}
+        end
 
       [] ->
         {:noreply, state}
@@ -126,10 +146,30 @@ defmodule Contractor.PoolServer do
     )
   end
 
+  # defp fismiss_worker(pid, worker_sup_name) do
+  #   DynamicSupervisor.terminate_child(supervisor, pid)
+  # end
+
   defp spin_up_workers(size, mfa, name) do
     for _x <- 1..size do
       Contractor.WorkerSupervisor.start_child(mfa, name)
     end
     |> Enum.map(fn {_, worker} -> worker end)
   end
+
+  defp state_name(%{max_overflow: max_overflow, overflow: overflow} = state) when overflow < 1 do
+    case length(state.workers) === 0 do
+      true ->
+        if max_overflow < 1 do
+          :full
+        else
+          :overflow
+        end
+      false -> :ready
+    end
+  end
+  defp state_name(%{max_overflow: max_overflow, overflow: max_overflow} = _state) do
+    :full
+  end
+  defp state_name(_), do: :overflow
 end

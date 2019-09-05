@@ -1,8 +1,8 @@
-# Contractor (Day65 |> Started Contractor v4, added overflow logic in checkout)
+# Contractor (Day66 |> Queuing worker process Remaining in V4)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**Started Contractor v4, added overflow logic in checkout**
+**Queuing worker process Remaining in V4**
 
 ## Installation
 
