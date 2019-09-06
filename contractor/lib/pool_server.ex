@@ -11,15 +11,16 @@ defmodule Contractor.PoolServer do
               monitor: nil,
               name: nil,
               overflow: nil,
-              max_overflow: nil
+              max_overflow: nil,
+              waiting: nil
   end
 
   def start_link([_pool_sup, pool_config] = params) do
     GenServer.start_link(__MODULE__, params, name: :"#{pool_config[:name]}Server")
   end
 
-  def checkout_worker(pool_name) do
-    GenServer.call(:"#{pool_name}Server", :checkout)
+  def checkout_worker(pool_name, block, timeout) do
+    GenServer.call(:"#{pool_name}Server", {:checkout, block}, timeout)
   end
 
   def checkin_worker(pool_name, worker_pid) do
@@ -46,7 +47,8 @@ defmodule Contractor.PoolServer do
 
   def init([{:name, _name}, {:mfa, mfa}, {:size, size}, {:max_overflow, max_overflow}], state) do
     send(self(), :start_worker_supervisor)
-    {:ok, %State{state | mfa: mfa, size: size, max_overflow: max_overflow}}
+    waiting_queue = :queue.new()
+    {:ok, %State{state | mfa: mfa, size: size, max_overflow: max_overflow, waiting: waiting_queue}}
   end
 
   @impl true
@@ -94,8 +96,8 @@ defmodule Contractor.PoolServer do
 
   @impl true
   def handle_call(
-        :checkout,
-        {consumer_pid, _ref},
+        {:checkout, block},
+        {consumer_pid, _ref} = from,
         %{max_overflow: max_overflow, overflow: overflow} = state
       ) do
     case state.workers do
@@ -109,7 +111,10 @@ defmodule Contractor.PoolServer do
         worker_pid = hd(spin_up_workers(1, state.mfa, state.name))
         true = :ets.insert(state.monitor, {worker_pid, ref})
         {:reply, worker_pid, %State{state | overflow: overflow + 1}}
-
+      [] when block === true ->
+        ref = Process.monitor(consumer_pid)
+        waiting_queue = :queue.in({from, ref}, state.waiting)
+        {:noreply, %State{state | waiting: waiting_queue}, :infinity}
       [] ->
         {:reply, :full, state}
     end

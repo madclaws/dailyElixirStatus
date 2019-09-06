@@ -108,8 +108,9 @@ defmodule Contractor.Server do
     GenServer.start_link(__MODULE__, pools_config, name: __MODULE__)
   end
 
-  def checkout_worker(pool_name) do
-    GenServer.call(:"#{pool_name}Server", :checkout)
+  def checkout_worker(pool_name, block, timeout) do
+    Contractor.PoolServer.checkout_worker(pool_name, block, timeout)
+    # GenServer.call(:"#{pool_name}Server", :checkout)
   end
 
   def checkin_worker(pool_name, worker_pid) do

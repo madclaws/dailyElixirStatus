@@ -1,8 +1,8 @@
-# Contractor (Day66 |> Queuing worker process Remaining in V4)
+# Contractor (Day67 |> Queuing Workers using erlang queue)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**Queuing worker process Remaining in V4**
+**Queuing Workers using erlang queue**
 
 ## Installation
 
