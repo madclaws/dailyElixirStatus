@@ -1,8 +1,8 @@
-# Contractor (Day67 |> Queuing Workers using erlang queue)
+# Contractor (Day67 |> Completed Contractor v4 !!)
 
 **Contractor lends you workers, to do your petty jobs.**
 
-**Queuing Workers using erlang queue**
+**Completed Contractor v4 !!**
 
 ## Installation
 

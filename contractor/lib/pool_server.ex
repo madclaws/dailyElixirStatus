@@ -10,7 +10,7 @@ defmodule Contractor.PoolServer do
               workers: nil,
               monitor: nil,
               name: nil,
-              overflow: nil,
+              overflow: 0,
               max_overflow: nil,
               waiting: nil
   end
@@ -66,15 +66,21 @@ defmodule Contractor.PoolServer do
   end
 
   @impl true
-  def handle_info({:EXIT, pid, _reason}, %{overflow: overflow} = state) do
+  def handle_info({:EXIT, pid, _reason}, %{overflow: overflow ,waiting: waiting_list} = state) do
     case :ets.lookup(state.monitor, pid) do
       [{pid, ref}] ->
         true = Process.demonitor(ref)
         true = :ets.delete(state.monitor, pid)
-        if overflow > 0 do
-          {:noreply, %State{state | overflow: overflow - 1}}
-        else
-          {:noreply, %State{state | workers: [hd(spin_up_workers(1, state.mfa, state.name)) | state.workers]}}
+        case :queue.out(waiting_list) do
+          {{:value, {from, ref}}, rest} ->
+           worker_pid = hd(spin_up_workers(1, state.mfa, state.name))
+           true = :ets.insert(state.monitor, {worker_pid, ref})
+           GenServer.reply(from, worker_pid)
+           {:noreply, %State{state | waiting: rest}}
+          {:empty, empty} when overflow > 0 ->
+            {:noreply, %State{state | overflow: overflow - 1, waiting: empty}}
+          {:empty, empty} ->
+            {:noreply, %State{state | workers: [hd(spin_up_workers(1, state.mfa, state.name)) | state.workers], waiting: empty}}
         end
       [] ->
         {:noreply, state}
@@ -125,22 +131,26 @@ defmodule Contractor.PoolServer do
   end
 
   @impl true
-  def handle_cast({:checkin, worker_pid}, %{overflow: overflow} = state) do
+  def handle_cast({:checkin, worker_pid}, %{overflow: overflow, waiting: waiting_list} = state) do
     case :ets.lookup(state.monitor, worker_pid) do
       [{pid, ref}] ->
         true = Process.demonitor(ref)
         true = :ets.delete(state.monitor, pid)
-        if overflow > 0 do
-          :ok = Contractor.WorkerSupervisor.kill_child(state.name, pid)
-          {:noreply, %State{state | overflow: overflow - 1}}
-        else
-          {:noreply, %State{state | workers: [pid | state.workers]}}
+        case :queue.out(waiting_list) do
+          {{:value, {from, ref}}, rest} ->
+            true = :ets.insert(state.monitor, {worker_pid, ref})
+            GenServer.reply(from, worker_pid)
+            {:noreply, %State{state | waiting: rest}}
+          {:empty, empty} when overflow > 0 ->
+            :ok = Contractor.WorkerSupervisor.kill_child(state.name, pid)
+            {:noreply, %State{state | overflow: overflow - 1, waiting: empty}}
+          {:empty, empty} ->
+            {:noreply, %State{state | workers: [pid | state.workers], waiting: empty}}
+          end
+          [] ->
+            {:noreply, state}
         end
-
-      [] ->
-        {:noreply, state}
     end
-  end
 
   # helper functions
   defp get_worker_supervisor_spec(name) do
