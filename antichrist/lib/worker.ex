@@ -1,11 +1,11 @@
 defmodule Antichrist.Worker do
   use Timex
   require Logger
-  def start(url) do
+  def start(url, caller_pid) do
     {timestamp, response} = Duration.measure(fn -> HTTPoison.get(url) end)
     # Logger.info("Timestamp #{inspect(timestamp)}")
     # Logger.info("response #{inspect(response)}")
-    handle_response({Duration.to_milliseconds(timestamp), response})
+    send(caller_pid, handle_response({Duration.to_milliseconds(timestamp), response}))
   end
 
   defp handle_response({msecs, {:ok, %HTTPoison.Response{status_code: code}}})
@@ -16,9 +16,11 @@ defmodule Antichrist.Worker do
 
   defp handle_response({_msecs, {:error, reason}}) do
     Logger.info("worker [#{node()} - #{inspect(self())}] error due to #{inspect(reason)}")
+    {:error, reason}
   end
 
   defp handle_response(_) do
     Logger.info("worker [#{node()} - #{inspect(self())}] errored out")
+    :error
   end
 end

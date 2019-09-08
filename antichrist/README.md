@@ -1,4 +1,4 @@
-# Antichrist (Day69 |> Non concurrent worker version)
+# Antichrist (Day69 |> concurrent worker version, with usual spawn and receive)
 
 **Antichrist destroys websites with DDOS**
 
