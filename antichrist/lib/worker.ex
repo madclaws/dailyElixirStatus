@@ -1,11 +1,11 @@
 defmodule Antichrist.Worker do
   use Timex
   require Logger
-  def start(url, caller_pid) do
+  def start(url) do
     {timestamp, response} = Duration.measure(fn -> HTTPoison.get(url) end)
     # Logger.info("Timestamp #{inspect(timestamp)}")
     # Logger.info("response #{inspect(response)}")
-    send(caller_pid, handle_response({Duration.to_milliseconds(timestamp), response}))
+    handle_response({Duration.to_milliseconds(timestamp), response})
   end
 
   defp handle_response({msecs, {:ok, %HTTPoison.Response{status_code: code}}})
