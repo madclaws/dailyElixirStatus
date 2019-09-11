@@ -1,4 +1,4 @@
-# Antichrist (Day70 |> concurrent worker version, with Task)
+# Antichrist (Day72 |> Antichrist ready, testing phase)
 
 **Antichrist destroys websites with DDOS**
 

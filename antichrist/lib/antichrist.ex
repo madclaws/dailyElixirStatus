@@ -1,20 +1,25 @@
 defmodule Antichrist do
 
+  use Application
   require Logger
   @moduledoc """
   Documentation for Antichrist.
   """
 
+  def start(_, _) do
+    Antichrist.Supervisor.start_link(:ok)
+  end
 
   def run(n_workers, url) do
     worker_fn = fn -> Antichrist.Worker.start(url) end
     1..n_workers
     |> Enum.map(fn _ -> Task.async(worker_fn) end)
-    |> Enum.map(&Task.await(&1, :infinity))
-    |> parse_results()
+    # |> Enum.map(&Task.await(&1, :infinity))
+    # |> parse_results()
   end
 
-  defp parse_results(results) do
+  def parse_results(results) do
+    Logger.info(inspect(results))
     {sucesses, _failures} = results
                           |> Enum.split_with(fn item ->
                             case item do

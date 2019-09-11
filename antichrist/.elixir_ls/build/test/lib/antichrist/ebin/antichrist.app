@@ -2,6 +2,9 @@
              [{applications,[kernel,stdlib,elixir,logger,httpoison,timex,
                              tzdata]},
               {description,"antichrist"},
-              {modules,['Elixir.Antichrist','Elixir.Antichrist.Worker']},
+              {modules,['Elixir.Antichrist','Elixir.Antichrist.Cli',
+                        'Elixir.Antichrist.Supervisor',
+                        'Elixir.Antichrist.Worker']},
               {registered,[]},
-              {vsn,"0.1.0"}]}.
+              {vsn,"0.1.0"},
+              {mod,{'Elixir.Antichrist',[]}}]}.

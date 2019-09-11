@@ -6,6 +6,7 @@ defmodule Antichrist.MixProject do
       app: :antichrist,
       version: "0.1.0",
       elixir: "~> 1.8",
+      escript: [main_module: Antichrist.Cli], #1
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -14,7 +15,7 @@ defmodule Antichrist.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      # mod: {Antichrist, []},
+      mod: {Antichrist, []},
       extra_applications: [:logger,  :httpoison, :timex]
     ]
   end
