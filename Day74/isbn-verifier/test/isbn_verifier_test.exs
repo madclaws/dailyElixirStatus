@@ -6,12 +6,12 @@ defmodule IsbnVerifierTest do
     assert IsbnVerifier.isbn?("3-598-21508-8")
   end
 
-  @tag :pending
+  # @tag :pending
   test "invalid isbn check digit" do
     refute IsbnVerifier.isbn?("3-598-21508-9")
   end
 
-  @tag :pending
+  # @tag :pending
   test "valid isbn number with a check digit of 10" do
     assert IsbnVerifier.isbn?("3-598-21507-X")
   end

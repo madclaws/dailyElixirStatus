@@ -17,17 +17,17 @@ defmodule IsbnVerifier do
                   |> String.split("-")
                   |> Enum.join
     validate_isbn(parsed_isbn, String.match?(parsed_isbn, ~r/^\d{10}$/),
-    String.match?(parsed_isbn, ~r/^\d{9}x$/))
+    String.match?(parsed_isbn, ~r/^\d{9}X$/))
   end
 
   defp validate_isbn(isbn, is_normal_matching, is_matching_x_check)
   defp validate_isbn(isbn, true, _) do
-    compute_value = isbn |> compute_isbn()
+    {compute_value, _} = isbn |> compute_isbn()
     rem(compute_value, 11) === 0
   end
   defp validate_isbn(isbn, _, true) do
-    compute_value = isbn |> String.trim_trailing("x") |> compute_isbn()
-    rem(compute_value, 11) === 0
+    {compute_value, _} = isbn |> String.trim_trailing("X") |> compute_isbn()
+    rem(compute_value + 10, 11) === 0
   end
 
   defp validate_isbn(_isbn, false, false) do
