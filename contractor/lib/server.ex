@@ -133,6 +133,7 @@ defmodule Contractor.Server do
 
   @impl true
   def handle_info({:start_pool, pool_config}, state) do
+    Logger.info(inspect(Process.whereis(Contractor.PoolsSupervisor)))
     Supervisor.start_child(Contractor.PoolsSupervisor, get_pool_server_spec(pool_config))
     {:noreply, state}
   end
@@ -148,9 +149,11 @@ defmodule Contractor.Server do
   defp get_pool_server_spec(pool_config) do
     Logger.info("#{inspect(pool_config)}")
 
-    Supervisor.child_spec({Contractor.PoolSupervisor, pool_config},
-      type: :supervisor,
-      id: :"#{pool_config[:name]}Supervisor"
-    )
+    spec = Supervisor.child_spec({Contractor.PoolSupervisor, pool_config},
+            type: :supervisor,
+            id: :"#{pool_config[:name]}Supervisor"
+          )
+    Logger.info(inspect(spec))
+    spec
   end
 end
